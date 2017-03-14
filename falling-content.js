@@ -135,7 +135,7 @@ function createBox(x,y,width,height, static) {
 	bodyDef.type = static ? b2Body.b2_staticBody : b2Body.b2_dynamicBody;
 	bodyDef.position.x = x / SCALE;
 	bodyDef.position.y = y / SCALE;
-	bodyDef.angle = static ? 0 : Math.random()*0.7 - 0.7;
+	bodyDef.angle = static ? 0 : Math.random() - 0.5;
 
 	var fixDef = new b2FixtureDef;
    	fixDef.density = 5;

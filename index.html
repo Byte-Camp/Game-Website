@@ -8,7 +8,7 @@
                 padding:0;
                 margin:0;
                 overflow: hidden;
-                background-color: #ffeba4;
+                background: #ffeba4;
             }
             #phys, #stat {
                 position:absolute;
@@ -55,42 +55,69 @@
             }
             #menu3{
                 top: 20px;
-                left: 900px;
+                left: 700px;
             }
             #menu4{
                 top: 400px;
-                left: 900px;
+                left: 700px;
             }
 
             #green1 {
-                top:900px; left:0px; display:inline-block; width:1500px;height:10px;
-            }
-            #green2 {
-            position:absolute;top:180px; left:130px; display:inline-block;width:750px;height:10px;
-            }
-            #green3 {
-            top:495px; left:130px; display:inline-block;width:750px;height:10px;
-            }
-            #green4 {
-            top:400px; left:30px; display:inline-block;width:180px;height:10px;
+                top:900px; left:0px; display:inline-block; width:2000px;height:40px;
             }
 
-            #green1, #green2, #green3, #green4{
-            visibility:visible;
-            position:absolute;
-            background:green;
-            opacity:.5;
-            }
-
-            div.rock {
-                background:brown;
-                z-index:6;
+            #green1{
+                visibility:visible;
                 position:absolute;
-                visibility: hidden;
+                background:green;
+                opacity:.5;
             }
-            svg {
-                z-index:0;
+
+            .index-btn-text{
+            	position: absolute;
+                font-family: 'Caveat Brush', cursive;
+            	top: 0px;
+            	left: 0px;
+            	width: 100%;
+            	padding-top: 20%;
+            	height: 70px;
+            	text-align: center;
+            	font-size: 4vw;
+            	font-weight: normal;
+            	/* adjust top up half the height of a single line */
+                margin-top: -0.5em;
             }
+
+            .index-btn-img{
+            	position: relative;
+            	display:block;
+            	width: 100%;
+            	margin-bottom: 10px;
+            }
+
+            .banner-img{
+                position: absolute;
+                display: inline-block;
+                width: 50%;
+                top: 50px;
+                left: 100px;
+                animation-name: logo-in;
+                animation-duration: 3s;
+                animation-fill-mode: forwards;
+                animation-delay: 1s;
+                opacity: 0;
+            }
+
+            @keyframes logo-in {
+                100%{
+                    opacity: 1;
+                }
+            }
+
+            a{
+                color: black;
+            }
+
         </style>
         <script type="text/javascript">
             function initialize(){
@@ -98,26 +125,48 @@
                 init();
             }
         </script>
+        <link href="https://fonts.googleapis.com/css?family=Caveat+Brush|Patrick+Hand|Permanent+Marker" rel="stylesheet">
     </head>
 
     <body onload='initialize()'>
-
-        <span></span>
-        <canvas id="canvas" width="100" height="100"></canvas>
+        <div class='container'>
+            <canvas id="canvas" width="100" height="100"></canvas>
+        </div>
+        <img src="img/website-logo.png" alt="Byte Camp Logo" class='banner-img' style='z-index: 100;'>
         <div id="stat"><div id="green1"></div></div>
         <div id="phys">
-            <div id="menu1" class='menu-img'><img src="btn_red.png" alt=""></div>
-            <div id="menu2" class='menu-img'><img src="btn_blue.png" alt=""></div>
-            <div id="menu3" class='menu-img'><img src="btn_green.png" alt=""></div>
-            <div id="menu4" class='menu-img'><img src="btn_orange.png" alt=""></div>
+            <div id="menu1" class='menu-img'>
+                <a href="#calendar">
+                    <img class='index-btn-img' src="img/btn_red.png"/>
+                    <p class="index-btn-text">Calendar</p>
+                </a>
+            </div>
+            <div id="menu2" class='menu-img'>
+                <a href="#about">
+                    <img class='index-btn-img' src="img/btn_blue.png"/>
+                    <p class="index-btn-text">About Us</p>
+                </a>
+            </div>
+            <div id="menu3" class='menu-img'>
+                <a href="#camps">
+                    <img class='index-btn-img' src="img/btn_green.png"/>
+                    <p class="index-btn-text">Camps</p>
+                </a>
+            </div>
+            <div id="menu4" class='menu-img'>
+                <a href="#byteovision">
+                    <img class='index-btn-img' src="img/btn_orange.png"/>
+                    <p class="index-btn-text" style='font-size: 50px;'>Byte-O-Vision</p>
+                </a>
+            </div>
         </div>
 
 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
-        <script src="box2d.min.js" charset="utf-8"></script>
-        <script src="MouseAndTouch.js" charset="utf-8"></script>
+        <script src="vendor/box2d.min.js" charset="utf-8"></script>
+        <script src="vendor/MouseAndTouch.js" charset="utf-8"></script>
+        <script src="vendor/DebugMouseDrag.js" charset="utf-8"></script>
         <script src="falling-content.js" charset="utf-8"></script>
-        <script src="DebugMouseDrag.js" charset="utf-8"></script>
     </body>
 </html>

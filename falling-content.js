@@ -40,6 +40,7 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
 	var mouse_pressed = false;
 	var mouse_joint = false;
 	var mouse_x, mouse_y;
+	var w;
 
 function init() {
 
@@ -49,26 +50,28 @@ function init() {
 	, true //allow sleep
 	);
 
-	//setup debug draw
-	//var debugDraw = new b2DebugDraw();
 	canvas = $("#canvas");
-	/*debugDraw.SetSprite(canvas[0].getContext("2d"));
-	debugDraw.SetDrawScale(SCALE);
-	debugDraw.SetFillAlpha(0.3);
-	debugDraw.SetLineThickness(1.0);
-	debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-	world.SetDebugDraw(debugDraw);*/
+
+	//Create the ground
+	w = $(window).width();
+	var h = $(window).height()*3;
+
+	$('#menu1').css('left', (w/2 - 400) + 'px');
+	$('#menu2').css('left', (w/2 - 400) + 'px');
+	$('#menu3').css('left', (w/2) + 'px');
+	$('#menu4').css('left', (w/2) + 'px');
+	$('#destroy_btn').click(function(e){
+		destroyScene(e);
+	})
+
 
 	//Create DOB OBjects
 	createDOMObjects();
+	createCharacter();
 
 	//Make sure that the screen canvas for debug drawing matches the window size
 	resizeHandler();
 	$(window).bind('resize', resizeHandler);
-
-	//Create the ground
-	var w = $(window).width();
-	var h = $(window).height()*3;
 
 	//Do one animation interation and start animating
 	interval = setInterval(update,1000/60);
@@ -95,7 +98,7 @@ function createDOMObjects() {
 	});
 
 
-$("#stat div").each(function (a,b) {
+	$("#stat div").each(function (a,b) {
 		var domObj = $(b);
 		var domPos = $(b).position();
 		var width = domObj.width() / 2 ;
@@ -110,26 +113,6 @@ $("#stat div").each(function (a,b) {
 
 }
 
-
-function createDebris(x,y,width,height) {
-	var bodyDef = new b2BodyDef;
-	bodyDef.type = b2Body.b2_dynamicBody;
-	bodyDef.position.x = x / SCALE;
-	bodyDef.position.y = y / SCALE;
-
-	var fixDef = new b2FixtureDef;
-   	fixDef.density = 5;
-   	fixDef.friction = 0.3;
-   	fixDef.restitution = 0.4;
-
-	fixDef.shape = new b2PolygonShape;
-	fixDef.shape.SetAsBox(width / SCALE, height / SCALE);
-	var thisbody = world.CreateBody(bodyDef);
-	//thisbody.ApplyTorque(Math.random()*10000-5000);
-	//thisbody.ApplyImpulse(new b2Vec2(Math.random()*500-250,Math.random()*500-250),(bodyDef.position.x,bodyDef.position.y));
-	return thisbody.CreateFixture(fixDef);
-}
-
 function createBox(x,y,width,height, static) {
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = static ? b2Body.b2_staticBody : b2Body.b2_dynamicBody;
@@ -140,7 +123,7 @@ function createBox(x,y,width,height, static) {
 	var fixDef = new b2FixtureDef;
    	fixDef.density = 5;
    	fixDef.friction = 0.5;
-   	fixDef.restitution = 0.6;
+   	fixDef.restitution = 0.55;
 
 	fixDef.shape = new b2PolygonShape;
 	fixDef.shape.SetAsBox(width / SCALE, height / SCALE);
@@ -203,3 +186,80 @@ function resizeHandler() {
 	canvas.attr('width', $(window).width());
 	canvas.attr('height', $(window).height());
 }
+
+
+function destroyScene(e) {
+
+	var mouse_x = e.clientX;
+	var dir = (mouse_x < w/2) ? 1 : -1;
+
+
+	for (var b = world.m_bodyList; b; b = b.m_next) {
+		 for (var f = b.m_fixtureList; f; f = f.m_next) {
+				if (f.m_userData) {
+					//Retrieve positions and rotations from the Box2d world
+					var body = f.m_body;
+					//console.log(body);
+					body.ApplyForce(new b2Vec2(100000*dir, 100000), body.GetWorldCenter());
+
+				}
+		}
+	}
+
+}
+
+// CHARACTER
+var c;
+
+function createCharacter() {
+		var domObj = $('#character');
+		var domPos = domObj.position();
+		var width = domObj.width() / 2 ;
+		var height = domObj.height() / 2
+
+        var x = (domPos.left) + width;
+        var y = (domPos.top) + height;
+        c = createChar(x,y,width,height);
+		c.m_userData = {domObj:domObj, width:width, height:height};
+		domObj.css({'left':'0px', 'top':'0px'});
+}
+
+function createChar(x,y,width, height) {
+    var bodyDef = new b2BodyDef;
+	bodyDef.type = b2Body.b2_dynamicBody;
+	bodyDef.position.x = x / SCALE;
+	bodyDef.position.y = y / SCALE;
+
+	var fixDef = new b2FixtureDef;
+   	fixDef.density = 10;
+   	fixDef.friction = 0.5;
+   	fixDef.restitution = 0.001;
+
+	fixDef.shape = new b2PolygonShape;
+	fixDef.shape.SetAsBox(width / SCALE, height / SCALE);
+	var thisbody = world.CreateBody(bodyDef);
+	thisbody.SetFixedRotation(true);
+	return thisbody.CreateFixture(fixDef);
+}
+
+$(document).ready(function(){
+
+    $(document).keydown(function(e){
+		switch (e.which) {
+            case 39:
+                c.m_body.ApplyForce(new b2Vec2(5000,0), c.m_body.GetWorldCenter());
+                break;
+			case 37:
+				c.m_body.ApplyForce(new b2Vec2(-5000,0), c.m_body.GetWorldCenter());
+				break;
+            default:
+        }
+		switch (e.which) {
+			case 38:
+				c.m_body.ApplyForce(new b2Vec2(0,50000), c.m_body.GetWorldCenter());
+				break;
+            default:
+        }
+    });
+
+})

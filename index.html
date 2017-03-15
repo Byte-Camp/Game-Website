@@ -63,7 +63,7 @@
             }
 
             #green1 {
-                top:900px; left:0px; display:inline-block; width:2000px;height:40px;
+                left:0px; display:inline-block; width:2000px;height:40px;
             }
 
             #green1{
@@ -71,6 +71,15 @@
                 position:absolute;
                 background:green;
                 opacity:.5;
+            }
+
+            #character{
+                position: absolute;
+                top: 600px;
+                left: 100px;
+                height: 200px;
+                width: 100px;
+                background-color: blue;
             }
 
             .index-btn-text{
@@ -96,15 +105,20 @@
             }
 
             .banner-img{
-                position: absolute;
-                display: inline-block;
                 width: 50%;
-                top: 50px;
-                left: 100px;
+                max-width: 700px;
+                padding-top: 3%;
+                display: block;
+                margin: auto;
                 animation-name: logo-in;
                 animation-duration: 3s;
                 animation-fill-mode: forwards;
                 animation-delay: 1s;
+                opacity: 0;
+            }
+
+            .fadeOut{
+                transition: 0.5s;
                 opacity: 0;
             }
 
@@ -121,7 +135,7 @@
         </style>
         <script type="text/javascript">
             function initialize(){
-                $('#green1').css('top', $(window).height() - 30 + 'px');
+                $('#green1').css('top', $(window).height() - 30 + 'px').css('width', $(window).width());
                 init();
             }
         </script>
@@ -132,7 +146,10 @@
         <div class='container'>
             <canvas id="canvas" width="100" height="100"></canvas>
         </div>
-        <img src="img/website-logo.png" alt="Byte Camp Logo" class='banner-img' style='z-index: 100;'>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-align:center;">
+            <img src="img/website-logo.png" alt="Byte Camp Logo" class='banner-img' style='z-index: 100;'>
+            <button type="button" name="destroy-scene" id='destroy_btn'>Destroy Scene</button>
+        </div>
         <div id="stat"><div id="green1"></div></div>
         <div id="phys">
             <div id="menu1" class='menu-img'>
@@ -161,12 +178,15 @@
             </div>
         </div>
 
+        <div id="character">
 
+        </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
         <script src="vendor/box2d.min.js" charset="utf-8"></script>
         <script src="vendor/MouseAndTouch.js" charset="utf-8"></script>
         <script src="vendor/DebugMouseDrag.js" charset="utf-8"></script>
         <script src="falling-content.js" charset="utf-8"></script>
+        <script src="character.js" charset="utf-8"></script>
     </body>
 </html>

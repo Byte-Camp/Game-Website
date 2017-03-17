@@ -141,7 +141,7 @@ function drawDOMObjects() {
 					var x = Math.floor((f.m_body.m_xf.position.x * SCALE) - f.m_userData.width);
 					var y = Math.floor((f.m_body.m_xf.position.y * SCALE) - f.m_userData.height);
 
-					if ((y > 1000) || (y < -200) || (x > 1500) || (x < -400)){
+					if ((y > 1000) || (y < -1000) || (x > 3000) || (x < -3000)){
 						 world.DestroyBody(f.m_body);
 						 var css = {'visibility':'hidden'};
 						 f.m_userData.domObj.css(css);
@@ -178,6 +178,7 @@ function update() {
 		world.DrawDebugData();
 	}*/
 	drawDOMObjects();
+	detectCharacterMovement();
 	world.ClearForces();
 }
 
@@ -232,7 +233,7 @@ function createChar(x,y,width, height) {
 
 	var fixDef = new b2FixtureDef;
    	fixDef.density = 10;
-   	fixDef.friction = 0.5;
+   	fixDef.friction = 0.9;
    	fixDef.restitution = 0.001;
 
 	fixDef.shape = new b2PolygonShape;
@@ -242,6 +243,7 @@ function createChar(x,y,width, height) {
 	return thisbody.CreateFixture(fixDef);
 }
 
+/*
 $(document).ready(function(){
 
     $(document).keydown(function(e){
@@ -263,3 +265,46 @@ $(document).ready(function(){
     });
 
 })
+*/
+
+/// store key codes and currently pressed ones
+var keys = {};
+	keys.UP = 38;
+	keys.LEFT = 37;
+	keys.RIGHT = 39;
+	keys.DOWN = 40;
+
+/// key detection (better to use addEventListener, but this will do)
+document.body.onkeyup =
+document.body.onkeydown = function(e){
+  if (e.preventDefault) {
+	e.preventDefault();
+  }
+  else {
+	e.returnValue = false;
+  }
+  var kc = e.keyCode || e.which;
+  keys[kc] = e.type == 'keydown';
+};
+
+/// character movement update
+var moveCharacter = function(dx, dy){
+  c.m_body.ApplyImpulse(new b2Vec2(dx * 100,0), c.m_body.GetWorldCenter());
+  c.m_body.ApplyImpulse(new b2Vec2(0, dy * 500), c.m_body.GetWorldCenter());
+};
+
+/// character control
+var detectCharacterMovement = function(){
+  if ( keys[keys.LEFT] ) {
+	moveCharacter(-1, 0);
+  }
+  if ( keys[keys.RIGHT] ) {
+	moveCharacter(1, 0);
+  }
+  if ( keys[keys.UP] ) {
+	moveCharacter(0, -1);
+  }
+  if ( keys[keys.DOWN] ) {
+	moveCharacter(0, 1);
+  }
+};

@@ -37,10 +37,24 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
 	b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef,
 	b2EdgeShape = Box2D.Collision.Shapes.b2EdgeShape;
 
+var objPhysicsData = {
+	'default': {
+		'density': 5,
+		'friction': 0.5,
+		'restitution': 0.55
+	},
+	'TV': {
+		'density': 10,
+		'friction': 0.7,
+		'restitution': 0.2
+	}
+}
+
 	var mouse_pressed = false;
 	var mouse_joint = false;
 	var mouse_x, mouse_y;
-	var w;
+	var w,h;
+	var campsDOM;
 
 function init() {
 
@@ -54,7 +68,7 @@ function init() {
 
 	//Create the ground
 	w = $(window).width();
-	var h = $(window).height()*3;
+	h = $(window).height();
 
 	$('#menu1').css('left', (w/2 - 400) + 'px');
 	$('#menu2').css('left', (w/2 - 400) + 'px');
@@ -64,10 +78,35 @@ function init() {
 		destroyScene(e);
 	})
 
+	var mainMenuDOM = $('#main-menu div');
+	campsDOM = $('#camps div');
 
-	//Create DOB OBjects
-	createDOMObjects();
-	createCharacter();
+	var mouseX;
+	var mouseY;
+	var draggingSomething;
+
+	document.body.onmousedown = function(e){
+		mouseX = e.clientX;
+		mouseY = e.clientY;
+		draggingSomething = false;
+	};
+
+	document.body.onmouseup = function(e){
+		if(Math.abs(mouseX - e.clientX) > 10 || (Math.abs(mouseY - e.clientY) > 10)){
+			draggingSomething = true;
+		}
+	};
+
+	document.body.onclick = function(e){
+		console.log(draggingSomething);
+		if(draggingSomething){
+			e.preventDefault();
+		}
+	};
+
+	//Create DOM OBjects
+	createDOMObjects(mainMenuDOM);
+	//createCharacter();
 
 	//Make sure that the screen canvas for debug drawing matches the window size
 	resizeHandler();
@@ -79,17 +118,18 @@ function init() {
 
 }
 
-function createDOMObjects() {
+function createDOMObjects(scene) {
 	//iterate all div elements and create them in the Box2D system
-	$("#phys div").each(function (a,b) {
+	$(scene).each(function (a,b) {
 		var domObj = $(b);
 		var domPos = $(b).position();
+		var id = $(b).attr('id');
 		var width = domObj.width() / 2 ;
 		var height = domObj.height() / 2;
 
         var x = (domPos.left) + width;
         var y = (domPos.top) + height;
-        var body = createBox(x,y,width,height);
+        var body = createBox(x,y,width,height, 0, id);
 		body.m_userData = {domObj:domObj, width:width, height:height};
 
 
@@ -113,12 +153,13 @@ function createDOMObjects() {
 
 }
 
-function createBox(x,y,width,height, static) {
+function createBox(x,y,width,height, static, id) {
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = static ? b2Body.b2_staticBody : b2Body.b2_dynamicBody;
 	bodyDef.position.x = x / SCALE;
 	bodyDef.position.y = y / SCALE;
 	bodyDef.angle = static ? 0 : Math.random() - 0.5;
+	var objData = (id == undefined) ? objPhysicsData.default: objPhysicsData[id];
 
 	var fixDef = new b2FixtureDef;
    	fixDef.density = 5;
@@ -141,7 +182,7 @@ function drawDOMObjects() {
 					var x = Math.floor((f.m_body.m_xf.position.x * SCALE) - f.m_userData.width);
 					var y = Math.floor((f.m_body.m_xf.position.y * SCALE) - f.m_userData.height);
 
-					if ((y > 1000) || (y < -1000) || (x > 3000) || (x < -3000)){
+					if ((y > h) || (y < -h) || (x > w*2) || (x < -w*2)){
 						 world.DestroyBody(f.m_body);
 						 var css = {'visibility':'hidden'};
 						 f.m_userData.domObj.css(css);
@@ -201,13 +242,22 @@ function destroyScene(e) {
 					//Retrieve positions and rotations from the Box2d world
 					var body = f.m_body;
 					//console.log(body);
-					body.ApplyForce(new b2Vec2(100000*dir, 100000), body.GetWorldCenter());
+					dir = 0;
+					body.ApplyForce(new b2Vec2(1000000*dir, 1000000), body.GetWorldCenter());
 
 				}
 		}
 	}
+	setTimeout(function(){
+			createDOMObjects(campsDOM);
+			setTimeout(function(){
+					$('#TV').css('visibility', 'visible');
+			}, 250);
+	}, 1000);
+
 
 }
+
 
 // CHARACTER
 var c;
@@ -275,7 +325,7 @@ var keys = {};
 	keys.DOWN = 40;
 
 /// key detection (better to use addEventListener, but this will do)
-document.body.onkeyup =
+/*document.body.onkeyup =
 document.body.onkeydown = function(e){
   if (e.preventDefault) {
 	e.preventDefault();
@@ -285,7 +335,7 @@ document.body.onkeydown = function(e){
   }
   var kc = e.keyCode || e.which;
   keys[kc] = e.type == 'keydown';
-};
+};*/
 
 /// character movement update
 var moveCharacter = function(dx, dy){

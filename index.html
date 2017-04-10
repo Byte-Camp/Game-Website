@@ -130,12 +130,31 @@
 
             a{
                 color: black;
+                transition: 0.5s;
+            }
+
+            a:hover{
+                color: red;
+            }
+
+            #TV{
+                position: absolute;
+                top: -600px;
+                left: 500px;
+                width: 500px;
+                height: 500px;
+                visibility: hidden;
+            }
+            .TV-img{
+                width: 100%;
+                position: absolute;
+                bottom: 0px;
             }
 
         </style>
         <script type="text/javascript">
             function initialize(){
-                $('#green1').css('top', $(window).height() - 30 + 'px').css('width', $(window).width()*3);
+                $('#green1').css('top', $(window).height() - 30 + 'px').css('width', $(window).width()*3).css('left', -$(window).width());
                 init();
             }
         </script>
@@ -151,7 +170,8 @@
             <button type="button" name="destroy-scene" id='destroy_btn'>Destroy Scene</button>
         </div>
         <div id="stat"><div id="green1"></div></div>
-        <div id="phys">
+
+        <div class='phys' id="main-menu">
             <div id="menu1" class='menu-img'>
                 <a href="#calendar">
                     <img class='index-btn-img' src="img/btn_red.png"/>
@@ -178,9 +198,13 @@
             </div>
         </div>
 
-        <div id="character">
-
+        <div class="phys" id='camps'>
+            <div id="TV">
+                <img class='TV-img' src='img/BOV.png'/>
+            </div>
         </div>
+
+        <!--<div id="character"></div>-->
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
         <script src="vendor/box2d.min.js" charset="utf-8"></script>
